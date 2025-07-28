@@ -1,0 +1,253 @@
+{% extends 'students/base.html' %} {% load static %} {% block content %}
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+  <div class="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
+    <h2
+      class="text-4xl font-extrabold text-gray-900 mb-8 pb-4 border-b border-gray-200"
+    >
+      Welcome,
+      <span class="text-indigo-700"
+        >{{ student.full_name|default:request.user.username }}</span
+      >!
+    </h2>
+
+    <div class="mb-10">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        <i class="fa-solid fa-graduation-cap mr-3 text-indigo-600"></i> Your
+        Enrolled Courses
+      </h3>
+
+      {% if courses_with_progress %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for data in courses_with_progress %}
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out flex flex-col"
+        >
+          {% if data.course.image %}
+          <div class="relative w-full h-40">
+            <img
+              src="{{ data.course.image.url }}"
+              alt="{{ data.course.title }}"
+              class="w-full h-full object-cover object-center"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+            ></div>
+            <p
+              class="absolute bottom-3 left-4 text-white text-xl font-bold drop-shadow-lg"
+            >
+              {{ data.course.title }}
+            </p>
+          </div>
+          {% else %}
+          <div
+            class="w-full h-40 bg-indigo-600 flex items-center justify-center text-white text-xl font-bold p-4 text-center"
+          >
+            {{ data.course.title }}
+          </div>
+          {% endif %}
+
+          <div class="p-5 flex-grow flex flex-col">
+            <div class="flex-grow">
+              <p class="text-sm text-gray-500 mb-1">
+                Category:
+                <span class="font-semibold">{{ data.course.category }}</span>
+              </p>
+              <p class="text-base font-semibold text-indigo-700 mb-2">
+                Instructor:
+                <span class="font-bold">{{ data.course.instructor }}</span>
+              </p>
+              <p class="text-gray-700 text-sm line-clamp-3 mb-4">
+                {{ data.course.description }}
+              </p>
+            </div>
+
+            {% if data.total_lessons > 0 %}
+            <div class="mt-auto pt-4 border-t border-gray-100">
+              <p class="text-sm text-gray-700 mb-2">
+                Progress:
+                <span class="font-semibold"
+                  >{{ data.completed_lessons }} / {{ data.total_lessons}}
+                  lessons</span
+                >
+              </p>
+            </div>
+            {% else %}
+            <p
+              class="text-sm text-gray-500 mt-auto pt-4 border-t border-gray-100"
+            >
+              No lessons in this course yet.
+            </p>
+            {% endif %}
+          </div>
+          <div class="p-5 pt-0">
+            <a
+              href="{% url 'students:course_lessons' data.course.id %}"
+              class="inline-flex items-center px-5 py-2 bg-indigo-600 text-white text-base font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 ease-in-out w-full justify-center transform hover:scale-105"
+            >
+              <i class="fa-solid fa-arrow-right mr-2"></i> Continue Course
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div
+        class="bg-blue-50 border border-blue-200 text-blue-800 p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center"
+      >
+        <i class="fa-solid fa-book-open text-5xl mb-4 text-blue-600"></i>
+        <p class="text-xl font-semibold mb-3">
+          You haven't enrolled in any courses yet.
+        </p>
+        <p class="text-gray-700 mb-6">
+          Explore our catalog to find exciting new courses!
+        </p>
+        <a
+          href="{% url 'students:enroll_courses' %}"
+          class="inline-flex items-center px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 transform hover:scale-105 transition duration-300 ease-in-out"
+        >
+          <i class="fa-solid fa-magnifying-glass mr-2"></i> Browse Courses
+        </a>
+      </div>
+      {% endif %}
+    </div>
+
+    ---
+    <div
+      class="mb-10 p-6 bg-yellow-50 rounded-xl border border-yellow-200 shadow-inner"
+    >
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        <i class="fa-solid fa-clipboard-list mr-3 text-yellow-600"></i> Upcoming
+        Assignments
+      </h3>
+      {% if upcoming_assignments %}
+      <ul class="space-y-4">
+        {% for assignment in upcoming_assignments %}
+        <li
+          class="p-4 bg-white rounded-lg shadow-sm border border-yellow-100 flex items-center justify-between"
+        >
+          <div>
+            <p class="font-semibold text-gray-900 text-lg">
+              {{ assignment.title }}
+            </p>
+            <p class="text-gray-600 text-sm">
+              Course:
+              <span class="font-medium">{{ assignment.course.title }}</span>
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm text-yellow-700">
+              <i class="fa-regular fa-clock mr-1"></i> Due:
+              <span class="font-semibold"
+                >{{ assignment.due_date|date:"M d, Y" }}</span
+              >
+            </p>
+            <a
+              href="{% url 'students:assignment_detail' assignment.id %}"
+              class="text-blue-600 hover:underline text-sm mt-1 inline-block"
+              >View Details</a
+            >
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="text-center py-4 text-gray-600 italic">
+        <p>
+          <i class="fa-solid fa-check-circle mr-2 text-green-500"></i> No
+          upcoming assignments. Great job!
+        </p>
+      </div>
+      {% endif %}
+    </div>
+
+    ---
+    <div
+      class="mb-10 p-6 bg-green-50 rounded-xl border border-green-200 shadow-inner"
+    >
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        <i class="fa-solid fa-chart-bar mr-3 text-green-600"></i> Your Grades
+      </h3>
+      {% if grades %}
+      <div class="overflow-x-auto">
+        <table
+          class="min-w-full bg-white rounded-lg shadow-sm border border-green-100"
+        >
+          <thead class="bg-green-100">
+            <tr>
+              <th
+                class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider rounded-tl-lg"
+              >
+                Course
+              </th>
+              <th
+                class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Score
+              </th>
+              <th
+                class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider rounded-tr-lg"
+              >
+                Details
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for grade in grades %}
+            <tr
+              class="border-b border-green-50 last:border-b-0 hover:bg-green-50"
+            >
+              <td class="py-3 px-4 text-gray-800">{{ grade.course.title }}</td>
+              <td
+                class="py-3 px-4 font-bold {% if grade.score >= 70 %}text-green-600{% else %}text-red-600{% endif %}"
+              >
+                {{ grade.score }}%
+              </td>
+              <td class="py-3 px-4">
+                <a
+                  href="{% url 'students:course_detail' grade.course.id %}#grades"
+                  class="text-blue-600 hover:underline text-sm"
+                  >View</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-4 text-gray-600 italic">
+        <p>
+          <i class="fa-solid fa-clipboard-question mr-2 text-gray-500"></i> No
+          grades recorded yet.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+
+    ---
+    <div
+      class="p-6 bg-purple-50 rounded-xl border border-purple-200 shadow-inner text-center"
+    >
+      <h3
+        class="text-2xl font-bold text-gray-800 mb-4 flex items-center justify-center"
+      >
+        <i class="fa-solid fa-star mr-3 text-purple-600"></i> Your Feedback
+        Matters!
+      </h3>
+      <p class="text-gray-700 mb-4">
+        We'd love to hear about your learning experience. You can leave reviews
+        and ratings directly on your **enrolled course pages**. Your feedback
+        helps us improve!
+      </p>
+      <a
+        href="{% url 'students:enroll_courses' %}"
+        class="inline-flex items-center px-6 py-3 bg-purple-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-purple-700 transform hover:scale-105 transition duration-300 ease-in-out"
+      >
+        <i class="fa-solid fa-comment-dots mr-2"></i> Review Courses
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

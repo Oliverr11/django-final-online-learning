@@ -1,0 +1,13 @@
+{% extends 'instructors/base.html' %} {% block title %}Assignment Review{%endblock%} {% block content %}
+<h1>Review Submission - {{ submission.student.full_name }}</h1>
+<p>Assignment: {{ submission.assignment.title }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit" class="btn btn-primary">Save Review</button>
+  <a href="{% url 'instructors:assignment_submissions_review' submission.assignment.id %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

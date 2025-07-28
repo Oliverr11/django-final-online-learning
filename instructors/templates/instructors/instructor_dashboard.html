@@ -1,0 +1,151 @@
+{% extends 'instructors/base.html' %} {% block title %}Instructor
+Dashboard{%endblock %} {% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+  <h1
+    class="text-4xl font-extrabold text-gray-900 mb-8 pb-4 border-b border-gray-200"
+  >
+    <i class="fa-solid fa-chalkboard-user mr-3 text-indigo-600"></i> Welcome,
+    {{instructor.full_name }}
+  </h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div
+      class="bg-gradient-to-br from-blue-500 to-blue-700 p-6 rounded-xl shadow-lg text-white transform hover:scale-105 transition-transform duration-300 ease-in-out flex flex-col justify-between"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl font-bold">Total Courses</h3>
+        <i class="fa-solid fa-book text-3xl opacity-75"></i>
+      </div>
+      <p class="text-5xl font-extrabold">{{ total_courses }}</p>
+      <p class="text-sm opacity-90 mt-1">Courses you are teaching</p>
+    </div>
+
+    <div
+      class="bg-gradient-to-br from-green-500 to-green-700 p-6 rounded-xl shadow-lg text-white transform hover:scale-105 transition-transform duration-300 ease-in-out flex flex-col justify-between"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl font-bold">Total Enrollments</h3>
+        <i class="fa-solid fa-users text-3xl opacity-75"></i>
+      </div>
+      <p class="text-5xl font-extrabold">{{ total_enrollments }}</p>
+      <p class="text-sm opacity-90 mt-1">Students across all your courses</p>
+    </div>
+
+    <div
+      class="bg-gradient-to-br from-red-500 to-red-700 p-6 rounded-xl shadow-lg text-white transform hover:scale-105 transition-transform duration-300 ease-in-out flex flex-col justify-between"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl font-bold">Assignments to Grade</h3>
+        <i class="fa-solid fa-clipboard-check text-3xl opacity-75"></i>
+      </div>
+      <p class="text-5xl font-extrabold">{{ total_assignments_to_grade }}</p>
+      <p class="text-sm opacity-90 mt-1">Pending submissions for review</p>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-xl rounded-2xl border border-gray-100 p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Your Courses</h2>
+      {# Adjusted to 'Your Courses' for clarity #}
+      <a
+        href="{% url 'instructors:course_create' %}"
+        class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-indigo-700 transition duration-200 shadow-md"
+      >
+        <i class="fa-solid fa-plus-circle mr-2"></i> Create New Course
+      </a>
+    </div>
+
+    <div class="overflow-x-auto">
+      {# Added overflow for small screens #}
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+            >
+              Course Title
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+            >
+              Enrolled Students
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+            >
+              Assignments to Grade
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider text-center"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for item in course_data %}
+          <tr class="hover:bg-gray-50 transition-colors duration-150">
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+            >
+              {{ item.course.title }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <i class="fa-solid fa-users text-blue-500 mr-2"></i
+              >{{item.enrollment_count }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <i class="fa-solid fa-clipboard-check text-red-500 mr-2"></i
+              >{{item.assignments_to_grade }}
+            </td>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm text-center space-x-3"
+            >
+              <!-- View Details -->
+              <a
+                href="{% url 'instructors:course_detail' item.course.id %}"
+                class="text-blue-600 hover:text-blue-800 transition"
+                title="View Details"
+              >
+                <i class="fa-solid fa-circle-info text-lg"></i>
+              </a>
+
+              <!-- Edit -->
+              <a
+                href="{% url 'instructors:course_edit' item.course.id %}"
+                class="text-indigo-600 hover:text-indigo-800 transition"
+                title="Edit Course"
+              >
+                <i class="fa-solid fa-pen-to-square text-lg"></i>
+              </a>
+
+              <a
+                href="{% url 'instructors:course_delete' item.course.id %}"
+                title="Delete"
+                class="text-red-600 hover:text-red-800"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="px-6 py-6 text-center text-gray-500 text-lg">
+              <i
+                class="fa-solid fa-exclamation-circle text-orange-400 mr-2"
+              ></i>
+              No courses created yet.
+              <a
+                href="{% url 'course_create' %}"
+                class="text-indigo-600 hover:underline font-medium"
+                >Create your first course!</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'students/base.html' %} 
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h2 class="text-4xl font-extrabold text-gray-900 mb-8 pb-4 border-b border-gray-200">
+    Explore & Enroll in Courses
+  </h2>
+
+  {% if message %}
+  <div class="mb-6 p-4 bg-green-100 border border-green-200 text-green-800 rounded-lg shadow-sm flex items-center">
+    <i class="fa-solid fa-circle-check mr-3 text-green-500 text-xl"></i>
+    <p class="font-medium">{{ message }}</p>
+  </div>
+  {% endif %}
+
+  <div class="bg-gray-50 p-6 rounded-xl shadow-inner mb-8 border border-gray-100">
+    <form method="get" action="{% url 'students:enroll_courses' %}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+      <div class="lg:col-span-2"> <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search Courses</label>
+        <input
+          type="text"
+          name="q"
+          id="search"
+          value="{{ request.GET.q }}"
+          placeholder="Search by title or description..."
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+        />
+      </div>
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <select
+          name="category"
+          id="category"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+        >
+          <option value="">All Categories</option>
+          {% for cat in categories %}
+          <option value="{{ cat.name }}" {% if request.GET.category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="instructor" class="block text-sm font-medium text-gray-700 mb-1">Instructor</label>
+        <select
+          name="instructor"
+          id="instructor"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+        >
+          <option value="">All Instructors</option>
+          {% for inst in instructors %}
+          <option value="{{ inst.id }}" {% if request.GET.instructor|stringformat:"s" == inst.id|stringformat:"s" %}selected{% endif %}>{{ inst.full_name|default:inst.user.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="tag" class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+        <select
+          name="tag"
+          id="tag"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+        >
+          <option value="">All Tags</option>
+          {% for tag in tags %}
+          <option value="{{ tag.name }}" {% if request.GET.tag == tag.name %}selected{% endif %}>{{ tag.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-span-1 md:col-span-2 lg:col-span-1 flex justify-end gap-3"> <button
+          type="submit"
+          class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+        >
+          <i class="fa-solid fa-filter mr-2"></i> Filter
+        </button>
+        <a
+          href="{% url 'students:enroll_courses' %}"
+          class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+        >
+          Clear
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for course in courses %}
+    <div class="bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden flex flex-col hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out">
+      <a href="{% url 'students:course_details_public' course.id %}" class="flex flex-col flex-grow">
+        {% if course.image %}
+        <div class="relative w-full h-40">
+          <img src="{{ course.image.url }}" alt="{{ course.title }}" class="w-full h-full object-cover object-center">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        </div>
+        {% else %}
+        <div class="w-full h-40 bg-indigo-600 flex items-center justify-center text-white text-xl font-bold p-4 text-center">
+          </div>
+        {% endif %}
+        <div class="p-5 flex flex-col flex-grow">
+          <div class="flex-grow">
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ course.title }}</h3>
+            <p class="text-sm text-gray-500 mb-1">Category: <span class="font-semibold">{{ course.category }}</span></p>
+            <p class="text-sm font-medium text-indigo-700 mb-2">Instructor: {{ course.instructor }}</p>
+            <p class="text-gray-700 text-sm line-clamp-3 mb-4">{{ course.description|truncatewords:25 }}</p>
+            
+            {% if course.tags.all %}
+            <div class="flex flex-wrap gap-2 mb-2">
+              {% for tag in course.tags.all %}
+              <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">#{{ tag.name }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+            </div>
+        </div>
+      </a>
+      
+      <div class="p-5 pt-0">
+        {% if course.id in enrolled_courses %}
+        <button disabled class="inline-flex items-center justify-center bg-green-500 text-white px-4 py-2 rounded-lg font-semibold cursor-not-allowed opacity-80 shadow-md w-full">
+          <i class="fa-solid fa-check-circle mr-2"></i> Already Enrolled
+        </button>
+        {% else %}
+        <form method="post" action="{% url 'students:enroll_courses' %}">
+          {% csrf_token %}
+          <input type="hidden" name="course_id" value="{{ course.id }}">
+          <button type="submit" class="inline-flex items-center justify-center bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 ease-in-out shadow-md w-full transform hover:scale-105">
+            <i class="fa-solid fa-plus-circle mr-2"></i> Enroll Now
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full bg-blue-50 border border-blue-200 text-blue-800 p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center mt-4">
+      <i class="fa-solid fa-magnifying-glass-minus text-5xl mb-4 text-blue-600"></i>
+      <p class="text-xl font-semibold mb-3">No courses found matching your criteria.</p>
+      <p class="text-gray-700">Try adjusting your search or filters.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends 'students/base.html' %} {% block content %}
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
+    <div
+      class="mb-6 pb-4 border-b border-gray-200 flex justify-between items-center flex-wrap gap-4"
+    >
+      <h2
+        class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight"
+      >
+        {{ course.title }}
+      </h2>
+      <a
+        href="{% url 'students:enroll_courses' %}"
+        class="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-600 text-base font-semibold rounded-lg shadow-sm hover:bg-indigo-100 transition duration-300 ease-in-out"
+      >
+        <i class="fa-solid fa-arrow-left mr-2"></i> Back to All Courses
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="md:col-span-2">
+        {% if course.image %}
+        <div
+          class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg mb-6"
+        >
+          <img
+            src="{{ course.image.url }}"
+            alt="{{ course.title }}"
+            class="w-full h-full object-cover object-center"
+          />
+        </div>
+        {% else %}
+        <div
+          class="w-full aspect-video bg-indigo-200 flex items-center justify-center text-indigo-700 text-2xl font-bold rounded-xl shadow-lg mb-6"
+        >
+          No Course Image
+        </div>
+        {% endif %}
+
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-200"
+        >
+          About This Course
+        </h3>
+        <p class="text-gray-700 text-lg leading-relaxed mb-6">
+          {{ course.description }}
+        </p>
+
+        <h3
+          class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-200"
+        >
+          Course Curriculum
+        </h3>
+        {% if lessons %}
+        <ul class="space-y-3 mb-6">
+          {% for lesson in lessons %}
+          <li
+            class="bg-gray-50 border border-gray-100 p-4 rounded-lg shadow-sm flex items-center gap-3"
+          >
+            <span class="text-indigo-600 font-bold text-lg flex-shrink-0"
+              >{{ lesson.sequence }}.</span
+            >
+            <div>
+              <p class="text-lg font-semibold text-gray-800">
+                {{ lesson.title }}
+              </p>
+              <p class="text-gray-600 text-sm">
+                {{ lesson.description|truncatewords:15 }}
+              </p>
+            </div>
+            {% if is_enrolled %}
+            <a
+              href="{% url 'students:lesson_detail' course.id lesson.id %}"
+              class="ml-auto inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium text-sm transition duration-200"
+            >
+              View Lesson <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+            </a>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="text-center py-4 text-gray-500 italic">
+          No lessons have been added to this course yet.
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="md:col-span-1">
+        <div
+          class="bg-blue-50 border border-blue-200 rounded-xl p-6 shadow-md mb-6"
+        >
+          <h4 class="text-xl font-bold text-blue-800 mb-4 flex items-center">
+            <i class="fa-solid fa-info-circle mr-2 text-blue-600"></i> Course
+            Overview
+          </h4>
+          <p class="text-gray-700 mb-3">
+            <span class="font-semibold">Category:</span> {{ course.category }}
+          </p>
+          <p class="text-gray-700 mb-3">
+            <span class="font-semibold">Instructor:</span>
+            {{ course.instructor.full_name }}
+          </p>
+          {% if lessons %}
+          <p class="text-gray-700 mb-3">
+            <span class="font-semibold">Lessons:</span> {{ lessons.count }}
+          </p>
+          {% endif %} {% if course.tags.all %}
+          <div class="mt-4 pt-4 border-t border-blue-100">
+            <h5 class="font-semibold text-gray-700 mb-2">Tags:</h5>
+            <div class="flex flex-wrap gap-2">
+              {% for tag in course.tags.all %}
+              <span
+                class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full shadow-sm"
+                >#{{ tag.name }}</span
+              >
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="mt-8">
+          {% if is_enrolled %}
+          <button
+            disabled
+            class="w-full inline-flex items-center justify-center bg-green-500 text-white px-6 py-3 rounded-lg font-semibold cursor-not-allowed opacity-80 shadow-lg text-lg"
+          >
+            <i class="fa-solid fa-check-circle mr-2"></i> Already Enrolled
+          </button>
+          {% if first_lesson_id %}
+          <a
+            href="{% url 'students:lesson_detail' course.id first_lesson_id %}"
+            class="mt-4 w-full inline-flex items-center justify-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 ease-in-out shadow-lg text-lg transform hover:scale-105"
+          >
+            <i class="fa-solid fa-book-open mr-2"></i> Start Course
+          </a>
+          {% else %}
+          <a
+            href="{% url 'students:course_lessons' course.id %}"
+            class="mt-4 w-full inline-flex items-center justify-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 ease-in-out shadow-lg text-lg transform hover:scale-105"
+          >
+            <i class="fa-solid fa-book-open mr-2"></i> View All Lessons
+          </a>
+          {% endif %} {% else %}
+          <form method="post" action="{% url 'students:enroll_courses' %}">
+            {% csrf_token %}
+            <input type="hidden" name="course_id" value="{{ course.id }}" />
+            <button
+              type="submit"
+              class="w-full inline-flex items-center justify-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 ease-in-out shadow-lg text-lg transform hover:scale-105"
+            >
+              <i class="fa-solid fa-plus-circle mr-2"></i> Enroll Now
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

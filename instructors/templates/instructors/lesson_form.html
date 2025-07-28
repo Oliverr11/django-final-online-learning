@@ -1,0 +1,177 @@
+{% extends 'instructors/base.html' %} {% block title %}Add New Lesson - {{
+course.title }}{%endblock%} {% block content %}
+<div class="max-w-3xl mx-auto px-4 py-8">
+  <nav class="text-sm font-medium text-gray-500 mb-6" aria-label="Breadcrumb">
+    <ol class="list-none p-0 inline-flex">
+      <li class="flex items-center">
+         <a
+        href="{% url 'instructors:manage_courses' %}"
+          class="text-indigo-600 hover:text-indigo-800"
+          >All Courses</a
+        >
+        <svg
+          class="fill-current w-3 h-3 mx-3"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 320 512"
+        >
+          <path
+            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 79.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.476 239.029c9.373 9.372 9.373 24.568 0 33.942z"
+          />
+        </svg>
+      </li>
+      <li class="flex items-center">
+        <a
+          href="{% url 'instructors:course_detail' course.id %}"
+          class="text-indigo-600 hover:text-indigo-800"
+          >{{ course.title }}</a
+        >
+        <svg
+          class="fill-current w-3 h-3 mx-3"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 320 512"
+        >
+          <path
+            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 79.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.476 239.029c9.373 9.372 9.373 24.568 0 33.942z"
+          />
+        </svg>
+      </li>
+      <li>
+        <span class="text-gray-900">Add New Lesson</span>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="bg-white shadow-xl rounded-2xl border border-gray-100 p-8 mb-8">
+    <h1
+      class="text-3xl font-extrabold text-gray-900 mb-6 pb-4 border-b border-gray-200"
+    >
+      <i class="fa-solid fa-plus-square mr-3 text-blue-600"></i> Add New Lesson
+      to "{{ course.title }}"
+    </h1>
+
+    {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+      <div
+        class="p-3 rounded-md {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}"
+      >
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %} {% if form.non_field_errors%}
+      <div
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        role="alert"
+      >
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline">{{ form.non_field_errors }}</span>
+      </div>
+      {% endif %}
+
+      <div>
+        <label
+          for="{{ form.title.id_for_label }}"
+          class="block text-sm font-medium text-gray-700"
+        >
+          {{ form.title.label }} {% if form.title.field.required %}<span
+            class="text-red-500"
+            >*</span
+          >{% endif %}
+        </label>
+        {{form.title}}{%if form.title.errors %}{%for error in form.title.errors%}
+        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+        {% endfor %} {% endif %}
+      </div>
+
+      <div>
+        <label
+          for="{{ form.description.id_for_label }}"
+          class="block text-sm font-medium text-gray-700"
+        >
+          {{form.description.label}}{% if form.description.field.required%}<span
+            class="text-red-500"
+            >*</span
+          >{% endif %}
+        </label>
+        {{ form.description }} {% if form.description.errors %} {% for error in form.description.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+        {% endfor %} {% endif %}
+      </div>
+
+      <div>
+        <label
+          for="{{ form.sequence.id_for_label }}"
+          class="block text-sm font-medium text-gray-700"
+        >
+          {{ form.sequence.label }} {% if form.sequence.field.required %}<span
+            class="text-red-500"
+            >*</span
+          >{% endif %}
+        </label>
+        {{ form.sequence }} {% if form.sequence.errors %} {% for error in form.sequence.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+        {% endfor %} {% endif %} {% if form.sequence.help_text %}
+        <p class="mt-2 text-sm text-gray-500">{{ form.sequence.help_text }}</p>
+        {% endif %}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label
+            for="{{ form.video_file.id_for_label }}"
+            class="block text-sm font-medium text-gray-700"
+          >
+            {{ form.video_file.label }}
+          </label>
+          {{ form.video_file }} {% if form.video_file.errors %} {% for error in form.video_file.errors %}
+          <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+          {% endfor %} {% endif %}
+        </div>
+
+        <div>
+          <label
+            for="{{ form.video_link.id_for_label }}"
+            class="block text-sm font-medium text-gray-700"
+          >
+            {{ form.video_link.label }}
+          </label>
+          {{ form.video_link }} {% if form.video_link.errors %} {% for error in form.video_link.errors %}
+          <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+          {% endfor %} {% endif %}
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="{{ form.document.id_for_label }}"
+          class="block text-sm font-medium text-gray-700"
+        >
+          {{ form.document.label }}
+        </label>
+        {{ form.document }} {% if form.document.errors %} {% for error in form.document.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+        {% endfor %} {% endif %}
+      </div>
+
+      <div class="flex justify-end gap-4 mt-8">
+        <a
+          href="{% url 'instructors:course_detail' course.id %}"
+          class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
+        >
+          <i class="fa-solid fa-arrow-left mr-3"></i> Cancel
+        </a>
+        <button
+          type="submit"
+          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200"
+        >
+          <i class="fa-solid fa-save mr-3"></i> Add Lesson
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

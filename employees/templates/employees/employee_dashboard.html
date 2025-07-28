@@ -1,0 +1,111 @@
+{% extends "employees/base.html" %} {% block title %} Employee Dashboard
+{%endblock %} {% block content %}
+
+<div
+  data-aos="flip-up"
+  class="max-w-7xl mx-auto mt-12 bg-white shadow-xl rounded-2xl p-8 border border-gray-100"
+>
+  <header class="mb-10">
+    <h1
+      class="text-4xl font-extrabold text-gray-900 flex items-center space-x-3"
+    >
+      <i class="fa-solid fa-hand-sparkles text-indigo-600"></i>
+      <span>Welcome, {{ employee_name }}!</span>
+    </h1>
+  </header>
+
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+    <div
+      class="text-2xl bg-white rounded-xl shadow-lg p-7 flex items-center space-x-5 border border-gray-200 transform hover:scale-103 transition-transform duration-200 ease-in-out"
+    >
+      <div
+        data-aos="flip-right"
+        class="bg-blue-50 text-blue-600 text-2xl rounded-full p-4 flex-shrink-0"
+      >
+        <i class="fa-solid fa-user-graduate h-18"></i>
+      </div>
+      <div>
+        <h3 class="text-3xl font-bold text-gray-800">{{ student_count }}</h3>
+        <p class="text-gray-600 text-lg">Students</p>
+      </div>
+    </div>
+
+    <div
+      class="text-2xl bg-white rounded-xl shadow-lg p-7 flex items-center space-x-5 border border-gray-200 transform hover:scale-103 transition-transform duration-200 ease-in-out"
+    >
+      <div
+        data-aos="flip-right"
+        class="bg-green-50 text-green-600 rounded-full p-4 flex-shrink-0"
+      >
+        <i class="fa-solid fa-chalkboard-user h-18"></i>
+      </div>
+      <div>
+        <h3 class="text-3xl font-bold text-gray-800">{{ instructor_count }}</h3>
+        <p class="text-gray-600 text-lg">Instructors</p>
+      </div>
+    </div>
+
+    <div
+      class="text-2xl bg-white rounded-xl shadow-lg p-7 flex items-center space-x-5 border border-gray-200 transform hover:scale-103 transition-transform duration-200 ease-in-out"
+    >
+      <div
+        data-aos="flip-right"
+        class="bg-purple-50 text-purple-600 rounded-full p-4 flex-shrink-0"
+      >
+        <i class="fa-solid fa-book h-18"></i>
+      </div>
+      <div>
+        <h3 class="text-3xl font-bold text-gray-800">{{ course_count }}</h3>
+        <p class="text-gray-600 text-lg">Courses</p>
+      </div>
+    </div>
+
+    <div
+      class="text-2xl bg-white rounded-xl shadow-lg p-7 flex items-center space-x-5 border border-gray-200 transform hover:scale-103 transition-transform duration-200 ease-in-out"
+    >
+      <div
+        data-aos="flip-right"
+        class="bg-yellow-50 text-yellow-600 rounded-full p-4 flex-shrink-0"
+      >
+        <i class="fa-solid fa-file-signature h-18"></i>
+      </div>
+      <div>
+        <h3 class="text-3xl font-bold text-gray-800">{{ enrollment_count }}</h3>
+        <p class="text-gray-600 text-lg">Enrollments</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <a
+      href="{% url 'employees:student_list' %}"
+      class="block p-6 rounded-xl text-center text-white font-semibold text-lg bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all duration-200 ease-in-out transform hover:scale-105 flex items-center justify-center space-x-3"
+    >
+      <i class="fa-solid fa-user-graduate"></i>
+      <span>Manage Students</span>
+    </a>
+    <a
+      href="{% url 'employees:instructor_list' %}"
+      class="block p-6 rounded-xl text-center text-white font-semibold text-lg bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all duration-200 ease-in-out transform hover:scale-105 flex items-center justify-center space-x-3"
+    >
+      <i class="fa-solid fa-chalkboard-user"></i>
+      <span>Manage Instructors</span>
+    </a>
+    <a
+      href="{% url 'employees:course_list' %}"
+      class="block p-6 rounded-xl text-center text-white font-semibold text-lg bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all duration-200 ease-in-out transform hover:scale-105 flex items-center justify-center space-x-3"
+    >
+      <i class="fa-solid fa-book"></i>
+      <span>Manage Courses</span>
+    </a>
+    <a
+      href="{% url 'employees:enrollment_list' %}"
+      class="block p-6 rounded-xl text-center text-white font-semibold text-lg bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all duration-200 ease-in-out transform hover:scale-105 flex items-center justify-center space-x-3"
+    >
+      <i class="fa-solid fa-file-signature"></i>
+      <span>Manage Enrollments</span>
+    </a>
+  </section>
+</div>
+
+{% endblock %}

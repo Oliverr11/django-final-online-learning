@@ -1,0 +1,72 @@
+{% extends 'instructors/base.html' %}
+{% block content %}
+
+<h1 class="text-3xl font-bold mb-4">{{ assignment.title }}</h1>
+<p class="mb-4">{{ assignment.description }}</p>
+<p class="mb-4">Due: {{ assignment.due_date|date:"F d, Y H:i" }}</p>
+<p class="mb-8">Max Score: {{ assignment.max_score }}</p>
+
+<h2 class="text-2xl font-semibold mb-4">Student Submissions</h2>
+
+<table class="w-full border-collapse border border-gray-300 mb-10">
+  <thead>
+    <tr class="bg-gray-200">
+      <th class="border border-gray-300 px-3 py-2">Student</th>
+      <th class="border border-gray-300 px-3 py-2">Submitted At</th>
+      <th class="border border-gray-300 px-3 py-2">File</th>
+      <th class="border border-gray-300 px-3 py-2">Score</th>
+      <th class="border border-gray-300 px-3 py-2">Feedback</th>
+      <th class="border border-gray-300 px-3 py-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for submission in submissions %}
+    <tr>
+      <td class="border border-gray-300 px-3 py-2">{{ submission.student.full_name }}</td>
+      <td class="border border-gray-300 px-3 py-2">{{ submission.submitted_at|date:"Y-m-d H:i" }}</td>
+      <td class="border border-gray-300 px-3 py-2">
+        {% if submission.uploaded_file %}
+          <a href="{{ submission.uploaded_file.url }}" target="_blank" class="text-blue-600 hover:underline">Download</a>
+        {% else %}
+          No File
+        {% endif %}
+      </td>
+      <form method="post" class="border border-gray-300 px-3 py-2">
+        {% csrf_token %}
+        <input type="hidden" name="submission_id" value="{{ submission.id }}">
+        <td class="border border-gray-300 px-3 py-2">
+          <input
+            type="number"
+            name="score"
+            min="0"
+            max="{{ assignment.max_score }}"
+            value="{{ submission.score|default_if_none:'' }}"
+            class="w-20 border rounded px-2 py-1"
+            required
+          />
+        </td>
+        <td class="border border-gray-300 px-3 py-2">
+          <textarea
+            name="feedback"
+            rows="2"
+            class="w-full border rounded px-2 py-1"
+          >{{ submission.feedback }}</textarea>
+        </td>
+        <td class="border border-gray-300 px-3 py-2">
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700">Save</button>
+        </td>
+      </form>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="6" class="text-center py-4 text-gray-600 italic">No submissions yet.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'instructors:lesson_detail' course_id=assignment.lesson.course.id lesson_id=assignment.lesson.id %}" class="text-indigo-600 hover:underline">
+  &larr; Back to Lesson
+</a>
+
+{% endblock %}

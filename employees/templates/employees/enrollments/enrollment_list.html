@@ -1,0 +1,235 @@
+{% extends "employees/base.html" %} {% block content %}
+
+<div
+  data-aos="flip-up"
+  class="max-w-7xl mx-auto mt-12 bg-white shadow-xl rounded-2xl p-8 border border-gray-100"
+>
+
+  <div class="flex justify-between items-center mb-8">
+    <h2
+      class="text-4xl font-extrabold text-gray-900 flex items-center space-x-3"
+    >
+      <svg
+        class="w-10 h-10 text-indigo-600"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9 2a1 1 0 00-.894.553L7.382 4H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm1 3a1 1 0 000 2h4a1 1 0 100-2H8z"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+      <span>All Enrollments</span>
+    </h2>
+    <a
+      href="{% url 'employees:enrollment_add' %}"
+      class="inline-flex items-center px-6 py-3 bg-indigo-700 text-white text-base font-semibold rounded-lg shadow-lg hover:bg-indigo-800 transform hover:scale-105 transition duration-300 ease-in-out"
+    >
+      <svg
+        class="w-5 h-5 mr-2 -ml-1"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+        ></path>
+      </svg>
+      Add New Enrollment
+    </a>
+  </div>
+<form method="GET" class="mb-6 flex flex-wrap gap-4 items-end">
+  <!-- Search -->
+  <div>
+    <label for="q" class="block text-sm font-medium text-gray-700">Search</label>
+    <input
+      type="text"
+      name="q"
+      id="q"
+      value=""
+      placeholder="Search student, course, or instructor"
+      class="w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500"
+    />
+  </div>
+
+  <!-- Category -->
+  <div>
+    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+    <select
+      name="category"
+      id="category"
+      class="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500"
+    >
+      <option value="">All Categories</option>
+      {% for category in categories %}
+        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+          {{ category.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Tag -->
+  <div>
+    <label for="tag" class="block text-sm font-medium text-gray-700">Tag</label>
+    <select
+      name="tag"
+      id="tag"
+      class="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500"
+    >
+      <option value="">All Tags</option>
+      {% for tag in tags %}
+        <option value="{{ tag.id }}" {% if selected_tag == tag.id|stringformat:"s" %}selected{% endif %}>
+          {{ tag.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Instructor -->
+  <div>
+    <label for="instructor" class="block text-sm font-medium text-gray-700">Instructor</label>
+    <select
+      name="instructor"
+      id="instructor"
+      class="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500"
+    >
+      <option value="">All Instructors</option>
+      {% for instructor in instructors %}
+        <option value="{{ instructor.id }}" {% if selected_instructor == instructor.id|stringformat:"s" %}selected{% endif %}>
+          {{ instructor.full_name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label class="block invisible mb-1">&nbsp;</label>
+    <button
+      type="submit"
+      class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+    >
+      Filter
+    </button>
+  </div>
+</form>
+
+  {% if enrollments %}
+  <div class="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gradient-to-r from-gray-100 to-gray-200">
+        <tr>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            #
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            Student
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            Instructor
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            Course
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            Enrolled At
+          </th>
+          <th scope="col" class="relative px-6 py-4">
+            <span class="sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-100">
+        {% for enrollment in enrollments %}
+        <tr class="hover:bg-gray-50 transition-colors duration-150">
+          <td
+            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+          >
+            {{ forloop.counter }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+            <a
+              href="#"
+              class="text-indigo-600 hover:text-indigo-900 font-semibold"
+            >
+              {{ enrollment.student.full_name }}
+            </a>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+            <a
+              href="#"
+              class="text-indigo-600 hover:text-indigo-900 font-semibold"
+            >
+              {{ enrollment.course.instructor }}
+            </a>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+            <a
+              href="#"
+              class="text-indigo-600 hover:text-indigo-900 font-medium"
+            >
+              {{ enrollment.course.title }}
+            </a>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+            {{ enrollment.enrolled_at }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium  space-x-3"
+          >
+          <a
+          href="{% url 'employees:enrollment_detail' enrollment.pk %}"
+                class="text-indigo-600 hover:text-indigo-900 transition-colors duration-150 ease-in-out"
+          ><i class="fa-solid fa-eye"></i></a
+          >
+          <a
+          href="{% url 'employees:enrollment_edit' enrollment.pk %}"
+                class="text-yellow-600 hover:text-yellow-800 transition-colors duration-150 ease-in-out"
+          > <i class="fa-solid fa-pen-to-square"></i></a
+          >
+          <a
+          href="{% url 'employees:enrollment_delete' enrollment.pk %}"
+                class="text-red-600 hover:text-red-900 transition-colors duration-150 ease-in-out"
+          >                <i class="fa-solid fa-trash-can"></i>
+</a
+          >
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="bg-gray-50 rounded-lg p-6 text-center shadow-inner">
+    <p class="text-gray-600 text-lg font-medium">
+      No enrollments found yet. Add one to get started!
+    </p>
+    <p class="text-gray-400 mt-2">
+      The enrollment list will appear here once you've added some.
+    </p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

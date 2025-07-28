@@ -1,0 +1,178 @@
+{% extends 'instructors/base.html' %} 
+{% block title %}Manage Courses{%endblock%} 
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">
+      <i class="fa-solid fa-layer-group mr-3 text-indigo-600"></i> Manage Your Courses
+    </h1>
+    <a
+      href="{% url 'instructors:course_create' %}"
+      class="bg-green-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-200 shadow-md flex items-center"
+    >
+      <i class="fa-solid fa-plus-circle mr-2"></i> Add New Course
+    </a>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-100">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+      <i class="fa-solid fa-filter mr-2 text-blue-500"></i> Filter Courses
+    </h3>
+    <form method="get" action="{% url 'instructors:manage_courses' %}" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="col-span-3 md:col-span-1">
+        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search by Title/Description</label>
+        <div class="relative">
+          <input
+            type="text"
+            name="q"
+            id="search"
+            placeholder="Search courses..."
+            value="{{ request.GET.q }}"
+            class="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-span-3 md:col-span-1">
+        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Filter by Category</label>
+        <select
+          name="category"
+          id="category"
+          class="mt-1 block w-full pl-3 pr-10 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          <option value="">All Categories</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-span-3 md:col-span-1">
+        <label for="tag" class="block text-sm font-medium text-gray-700 mb-1">Filter by Tag</label>
+        <select
+          name="tag"
+          id="tag"
+          class="mt-1 block w-full pl-3 pr-10 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          <option value="">All Tags</option>
+          {% for tag in tags %}
+            <option value="{{ tag.name }}" {% if request.GET.tag == tag.name %}selected{% endif %}>
+              {{ tag.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-span-3 flex justify-end gap-3">
+        <button
+          type="submit"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <i class="fa-solid fa-filter mr-2"></i> Apply Filters
+        </button>
+        {% if request.GET.q or request.GET.category or request.GET.tag %}
+        <a
+          href="{% url 'instructors:manage_courses' %}"
+          class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          <i class="fa-solid fa-xmark mr-2"></i> Clear Filters
+        </a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  {% if courses %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for course in courses %}
+    <div class="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 p-5 flex flex-col border border-gray-100">
+      {% if course.image %}
+      <img
+        src="{{ course.image.url }}"
+        alt="{{ course.title }}"
+        class="rounded-md mb-4 object-cover h-40 w-full border border-gray-200"
+      />
+      {% else %}
+      <div
+        class="bg-gray-100 rounded-md mb-4 h-40 flex items-center justify-center text-gray-400 border border-gray-200"
+      >
+        <i class="fa-solid fa-image text-4xl"></i>
+      </div>
+      {% endif %}
+
+      <h2 class="text-xl font-semibold mb-2 text-gray-900 truncate">{{ course.title }}</h2>
+      <p class="text-gray-600 flex-grow mb-4">
+        {{ course.description|truncatewords:20 }}
+      </p>
+
+      <div class="mt-auto flex justify-between items-center space-x-2">
+        <a
+          href="{% url 'instructors:course_detail' course.id %}"
+          class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200"
+          title="View Details"
+        >
+          <i class="fa-solid fa-eye mr-1"></i> Details
+        </a>
+        <a
+          href="{% url 'instructors:course_edit' course.id %}"
+          class="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition-colors duration-200"
+          title="Edit Course"
+        >
+          <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+        </a>
+        <a
+          href="{% url 'instructors:course_delete' course.id %}"
+          class="text-red-600 hover:text-red-800 text-sm font-medium transition-colors duration-200"
+          title="Delete Course"
+        >
+          <i class="fa-solid fa-trash mr-1"></i> Delete
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="bg-blue-50 border border-blue-200 text-blue-800 p-8 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
+    <i class="fa-solid fa-chalkboard-teacher text-5xl mb-4 text-blue-600"></i>
+    <p class="text-xl font-semibold mb-3">
+      No courses found matching your criteria.
+    </p>
+    {% if request.GET.q or request.GET.category or request.GET.tag %}
+    <p class="text-gray-700 mb-4">
+      Try clearing the filters or add a new course.
+    </p>
+    <div class="flex gap-3">
+        <a
+            href="{% url 'instructors:manage_courses' %}"
+            class="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-400 transition duration-200 shadow-md text-lg"
+        >
+            <i class="fa-solid fa-xmark mr-3"></i> Clear Filters
+        </a>
+        <a
+            href="{% url 'instructors:course_create' %}"
+            class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-200 shadow-lg text-lg"
+        >
+            <i class="fa-solid fa-plus-circle mr-3"></i> Create New Course
+        </a>
+    </div>
+    {% else %}
+    <p class="text-gray-700 mb-4">
+      You haven't created any courses yet. Start building your online academy!
+    </p>
+    <a
+      href="{% url 'instructors:course_create' %}"
+      class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-200 shadow-lg text-lg"
+    >
+      <i class="fa-solid fa-plus-circle mr-3"></i> Create Your First Course
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'instructors/base.html' %}
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto mt-10">
+  <h1 class="text-xl font-bold text-red-700 mb-4">Confirm Delete</h1>
+  <p>Are you sure you want to delete the assignment "<strong>{{ assignment.title }}</strong>"?</p>
+
+  <form method="POST" class="mt-6">
+    {% csrf_token %}
+    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Yes, Delete</button>
+    <a href="{% url 'instructors:lesson_detail' course_id=course_id lesson_id=lesson_id %}" class="ml-4 text-blue-600 hover:underline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

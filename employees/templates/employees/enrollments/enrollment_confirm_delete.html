@@ -1,0 +1,83 @@
+{% extends "employees/base.html" %}
+
+{% block content %}
+<div
+    data-aos="zoom-in" {# Added AOS animation for a cool entrance #}
+    data-aos-duration="600"
+    class="max-w-xl mx-auto mt-20 p-10 bg-white rounded-3xl shadow-2xl border border-red-100 relative overflow-hidden transform transition-all duration-300 hover:scale-[1.01]"
+>
+    {# Subtle background gradient for flair #}
+    <div class="absolute inset-0 bg-gradient-to-br from-red-50/20 via-white to-white pointer-events-none z-0 rounded-3xl"></div>
+    <div class="relative z-10 text-center"> {# Content aligned to center #}
+
+        {# Header with Warning Icon #}
+        <div class="mb-8 flex flex-col items-center">
+            <svg class="w-20 h-20 text-red-500 mb-4 animate-bounce-once" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <h2 class="text-4xl font-extrabold mb-3 text-red-700 tracking-tight">
+                Confirm Deletion
+            </h2>
+            <p class="text-lg text-gray-600 max-w-sm mx-auto">
+                Please confirm you wish to proceed with this action.
+            </p>
+        </div>
+
+        {# Confirmation Message #}
+        <p class="mb-8 text-xl text-gray-800 leading-relaxed font-medium">
+            Are you absolutely sure you want to delete the enrollment of<br>
+            <strong class="text-red-600 text-2xl block mt-2 mb-1">{{ enrollment.student.full_name }}</strong><br>
+            in the course<br>
+            <strong class="text-red-600 text-2xl block mt-1 mb-2">{{ enrollment.course.title }}</strong>?
+        </p>
+        <p class="mb-10 text-xl font-bold text-red-600 bg-red-50 p-4 rounded-lg border border-red-200 shadow-inner inline-block">
+            This action <span class="uppercase">cannot be undone</span>!
+        </p>
+
+        {# Action Buttons #}
+        <form method="post" class="flex flex-col sm:flex-row justify-center gap-6 mt-8">
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="flex-1 min-w-[160px] bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white
+                       px-8 py-4 rounded-xl font-bold text-xl shadow-xl transition-all duration-300 transform hover:scale-105
+                       focus:outline-none focus:ring-4 focus:ring-red-300 focus:ring-offset-2 flex items-center justify-center gap-2"
+            >
+                <i class="fa-solid fa-trash-can mr-2"></i> Yes, Delete Permanently
+            </button>
+            <a
+                href="{% url 'employees:enrollment_list' %}"
+                class="flex-1 min-w-[160px] bg-gray-200 hover:bg-gray-300 text-gray-800
+                       px-8 py-4 rounded-xl font-semibold text-xl shadow-md transition-all duration-300 transform hover:scale-105
+                       focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-offset-2 flex items-center justify-center gap-2"
+            >
+                <i class="fa-solid fa-ban mr-2"></i> Cancel
+            </a>
+        </form>
+    </div>
+</div>
+
+<style>
+    @keyframes bounceOnce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        25% {
+            transform: translateY(-10px);
+        }
+        40% {
+            transform: translateY(0);
+        }
+        55% {
+            transform: translateY(-5px);
+        }
+        70% {
+            transform: translateY(0);
+        }
+    }
+    .animate-bounce-once {
+        animation: bounceOnce 1s ease-in-out forwards;
+    }
+</style>
+
+{% endblock %}

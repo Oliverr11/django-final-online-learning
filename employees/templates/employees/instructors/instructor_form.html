@@ -1,0 +1,151 @@
+{% extends "employees/base.html" %}
+{% block content %}
+
+<div class="max-w-4xl mx-auto mt-12 p-8 bg-white rounded-xl shadow-3xl border border-gray-100">
+    <div class="text-center mb-10">
+        <h2 class="text-4xl font-extrabold text-gray-800 tracking-tight leading-tight mb-4">
+            {% if instructor %}
+                Edit Instructor: <span class="text-blue-600">{{ instructor.full_name }}</span>
+            {% else %}
+                Add New Instructor
+            {% endif %}
+        </h2>
+        <p class="text-gray-600 text-lg max-w-xl mx-auto">
+            {% if instructor %}
+                Update the details for {{ instructor.full_name }}. Leave the password blank to keep it unchanged.
+            {% else %}
+                Fill in the details below to add a new instructor to the system.
+            {% endif %}
+        </p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-8">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
+                <p class="font-bold">Please correct the following errors:</p>
+                <ul class="mt-2 list-disc list-inside">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-6 bg-gray-50 p-6 rounded-lg shadow-inner border border-gray-200">
+            <div class="md:col-span-1 flex justify-center items-center">
+                <div class="w-36 h-36 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border-4 border-blue-300 shadow-lg relative">
+                    <img
+                        id="previewImage"
+                        src="{% if instructor and instructor.profile_image %}{{ instructor.profile_image.url }}{% else %}#{% endif %}"
+                        alt="Profile Preview"
+                        class="w-full h-full object-cover {% if not instructor or not instructor.profile_image %}hidden{% endif %}"
+                    />
+                    <span id="noImageText" class="text-gray-500 text-sm p-4 text-center {% if instructor and instructor.profile_image %}hidden{% endif %}">No Image</span>
+                </div>
+            </div>
+            <div class="md:col-span-2">
+                <label for="{{ form.profile_image.id_for_label }}" class="block mb-2 text-md font-medium text-gray-800">Profile Image</label>
+                {{ form.profile_image }}
+                {% if form.profile_image.errors %}<p class="mt-1 text-sm text-red-600">{{ form.profile_image.errors|striptags }}</p>{% endif %}
+                <p class="mt-2 text-sm text-gray-500">Upload a square image for best results.</p>
+            </div>
+        </div>
+
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl shadow-inner border border-gray-200">
+            <h3 class="md:col-span-2 text-2xl font-semibold text-gray-800 border-b pb-4 mb-4">Login Details</h3>
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}<p class="mt-1 text-sm text-red-600">{{ form.username.errors|striptags }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.password.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}<p class="mt-1 text-sm text-red-600">{{ form.password.errors|striptags }}</p>{% endif %}
+            </div>
+
+            <h3 class="md:col-span-2 text-2xl font-semibold text-gray-800 border-b pb-4 mb-4 mt-6">Personal Information</h3>
+            <div>
+                <label for="{{ form.full_name.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Full Name</label>
+                {{ form.full_name }}
+                {% if form.full_name.errors %}<p class="mt-1 text-sm text-red-600">{{ form.full_name.errors|striptags }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}<p class="mt-1 text-sm text-red-600">{{ form.email.errors|striptags }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.phone.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Phone Number</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}<p class="mt-1 text-sm text-red-600">{{ form.phone.errors|striptags }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.gender.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Gender</label>
+                {{ form.gender }}
+                {% if form.gender.errors %}<p class="mt-1 text-sm text-red-600">{{ form.gender.errors|striptags }}</p>{% endif %}
+            </div>
+            <div class="md:col-span-2">
+                <label for="{{ form.address.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Address</label>
+                {{ form.address }}
+                {% if form.address.errors %}<p class="mt-1 text-sm text-red-600">{{ form.address.errors|striptags }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.date_of_birth.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Date of Birth</label>
+                {{ form.date_of_birth }}
+                {% if form.date_of_birth.errors %}<p class="mt-1 text-sm text-red-600">{{ form.date_of_birth.errors|striptags }}</p>{% endif %}
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-4">
+            <button
+                type="submit"
+                class="inline-flex items-center px-8 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition transform hover:scale-105"
+            >
+                {% if instructor %}Update Instructor{% else %}Save Instructor{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.querySelector('input[name="profile_image"]');
+        const preview = document.getElementById("previewImage");
+        const noImageText = document.getElementById("noImageText");
+
+        const currentImageSrc = "{% if instructor and instructor.profile_image %}{{ instructor.profile_image.url }}{% else %}{% endif %}";
+
+        if (currentImageSrc) {
+            preview.src = currentImageSrc;
+            preview.classList.remove("hidden");
+            noImageText.classList.add("hidden");
+        } else {
+            preview.classList.add("hidden");
+            noImageText.classList.remove("hidden");
+        }
+
+        input?.addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove("hidden");
+                    noImageText.classList.add("hidden");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.add("hidden");
+                noImageText.classList.remove("hidden");
+                preview.src = "#";
+            }
+        });
+    });
+</script>
+
+
+{% endblock %}

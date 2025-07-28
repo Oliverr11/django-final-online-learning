@@ -1,0 +1,10 @@
+{% extends 'instructors/base.html' %} {% block title %}Assignment Form{%endblock%} {% block content %}
+<h1>Create Assignment for {{ lesson.title }}</h1>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'students/base.html' %} 
+{% block content %}
+
+<div class="max-w-4xl mx-auto p-6 md:p-8">
+  <div
+    class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-gray-200"
+  >
+    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3 sm:mb-0">
+      Lessons in:
+      <span class="text-indigo-700">{{ course.title }}</span>
+    </h2>
+
+    <a
+      href="{% url 'students:dashboard' %}"
+      class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-base font-semibold rounded-lg shadow-md hover:bg-indigo-700 transform hover:scale-105 transition duration-300 ease-in-out"
+    >
+      <i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard
+    </a>
+  </div>
+
+  {% if lessons %}
+  <ul class="space-y-5">
+    {% for lesson in lessons %}
+    <li
+      class="bg-white border border-gray-100 p-5 rounded-xl shadow-lg hover:shadow-xl hover:border-indigo-200 transition duration-300 ease-in-out transform hover:-translate-y-0.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+    >
+      <div class="flex-grow">
+        <a
+          href="{% url 'students:lesson_detail' course.id lesson.id %}"
+          class="text-xl md:text-2xl font-bold text-indigo-700 hover:text-indigo-900 transition-colors duration-200 block mb-2"
+        >
+          Lesson {{ lesson.sequence }}: {{ lesson.title }}
+        </a>
+        <p class="text-gray-600 text-sm md:text-base leading-relaxed mb-3">
+          {{ lesson.description|truncatewords:25 }}
+        </p>
+        
+        <div class="flex items-center text-gray-500 text-xs md:text-sm">
+            {% if lesson.video_file or lesson.video_link %}
+                <i class="fa-solid fa-video mr-1"></i> Video Content
+            {% elif lesson.document %}
+                <i class="fa-solid fa-file-alt mr-1"></i> Document
+            {% else %}
+                <i class="fa-solid fa-book-open mr-1"></i> Text Lesson
+            {% endif %}
+        </div>
+      </div>
+
+      <div class="flex-shrink-0 text-right sm:ml-4 mt-3 sm:mt-0">
+        {% if lesson.id in completed_lessons %}
+        <span
+          class="inline-flex items-center px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full shadow-sm"
+        >
+          <i class="fa-solid fa-check-circle mr-2"></i> Completed
+        </span>
+        {% else %}
+        <span
+          class="inline-flex items-center px-3 py-1 text-sm font-semibold text-yellow-800 bg-yellow-100 rounded-full shadow-sm"
+        >
+          <i class="fa-solid fa-hourglass-half mr-2"></i> Not Started
+        </span>
+        {% endif %}
+
+        <a
+          href="{% url 'students:lesson_detail' course.id lesson.id %}"
+          class="mt-4 inline-flex items-center px-4 py-2 bg-indigo-500 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-indigo-600 transform hover:scale-105 transition duration-300 ease-in-out"
+        >
+          <i class="fa-solid fa-play mr-2"></i> Start Lesson
+        </a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div
+    class="bg-blue-50 border border-blue-200 text-blue-800 p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center mt-8"
+  >
+    <i class="fa-solid fa-book-open text-5xl mb-4 text-blue-600"></i>
+    <p class="text-xl font-semibold mb-3">
+      No lessons found in this course yet.
+    </p>
+    <p class="text-gray-700">
+      It looks like this course is still being prepared. Check back later!
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

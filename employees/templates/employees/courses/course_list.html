@@ -1,0 +1,208 @@
+{% extends 'employees/base.html' %} {% block content %}
+<div
+  data-aos="flip-up"
+  class="max-w-7xl mx-auto mt-12 bg-white shadow-xl rounded-2xl p-8 border border-gray-100"
+>
+  <div class="flex flex-col sm:flex-row justify-between items-center mb-8">
+    <h2
+      class="text-4xl font-extrabold text-gray-900 flex items-center space-x-3 mb-4 sm:mb-0"
+    >
+      <i class="fa-solid fa-book w-10 h-10 text-indigo-600"></i>
+      <span>All Courses</span>
+    </h2>
+    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+      <a
+        href="{% url 'employees:course_add' %}"
+        class="inline-flex items-center px-6 py-3 bg-indigo-700 text-white text-base font-semibold rounded-lg shadow-lg hover:bg-indigo-800 transform hover:scale-105 transition duration-300 ease-in-out"
+      >
+        <i class="fa-solid fa-plus mr-2 -ml-1"></i> Add Course
+      </a>
+
+      <a
+        href="{% url 'employees:tag_list' %}"
+        class="inline-flex items-center px-6 py-3 bg-purple-600 text-white text-base font-semibold rounded-lg shadow-lg hover:bg-purple-700 transform hover:scale-105 transition duration-300 ease-in-out"
+      >
+        <i class="fa-solid fa-tags mr-2 -ml-1"></i> Tag
+      </a>
+
+      <a
+        href="{% url 'employees:category_list' %}"
+        class="inline-flex items-center px-6 py-3 bg-teal-600 text-white text-base font-semibold rounded-lg shadow-lg hover:bg-teal-700 transform hover:scale-105 transition duration-300 ease-in-out"
+      >
+        <i class="fa-solid fa-layer-group mr-2 -ml-1"></i> Category
+      </a>
+    </div>
+  </div>
+<form method="GET" class="mb-6 flex flex-wrap gap-4 items-end">
+  <div>
+    <label for="q" class="block text-sm font-medium text-gray-700">Search</label>
+    <input
+      type="text"
+      name="q"
+      id="q"
+      value=""
+      placeholder="Search course or instructor"
+      class="w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500"
+    />
+  </div>
+
+  <div>
+    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+    <select name="category" id="category" class="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500">
+      <option value="">All Categories</option>
+      {% for category in categories %}
+        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+          {{ category.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label for="tag" class="block text-sm font-medium text-gray-700">Tag</label>
+    <select name="tag" id="tag" class="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500">
+      <option value="">All Tags</option>
+      {% for tag in tags %}
+        <option value="{{ tag.id }}" {% if selected_tag == tag.id|stringformat:"s" %}selected{% endif %}>
+          {{ tag.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label for="instructor" class="block text-sm font-medium text-gray-700">Instructor</label>
+    <select name="instructor" id="instructor" class="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500">
+      <option value="">All Instructors</option>
+      {% for instructor in instructors %}
+        <option value="{{ instructor.id }}" {% if selected_instructor == instructor.id|stringformat:"s" %}selected{% endif %}>
+          {{ instructor.full_name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label class="block invisible mb-1">&nbsp;</label>
+    <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+      Filter
+    </button>
+  </div>
+</form>
+
+  <div class="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gradient-to-r from-gray-100 to-gray-200">
+        <tr>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            #
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            Title
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            Instructor
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            Category
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+          >
+            Tags
+          </th>
+          <th scope="col" class="px-6 py-4 text-center">
+            <span class="sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-100">
+        {% for course in courses %}
+        <tr class="hover:bg-gray-50 transition-colors duration-150">
+          <td
+            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+          >
+            {{ forloop.counter }}
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+            {{ course.title }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+            {{ course.instructor}}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+            <span
+              class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+            >
+              {{ course.category.name }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex flex-wrap gap-1">
+              {% for tag in course.tags.all %}
+              <span
+                class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                >{{ tag.name }}</span
+              >
+              {% empty %}
+              <span class="text-gray-400 italic text-sm">No Tags</span>
+              {% endfor %}
+            </div>
+          </td>
+          <td
+            class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium"
+          >
+            <div class="flex justify-center space-x-3">
+              <a
+                href="{% url 'employees:course_detail' course.pk %}"
+                class="text-indigo-600 hover:text-indigo-900 transition-colors duration-150 ease-in-out"
+                title="View Details"
+              >
+                <i class="fa-solid fa-eye"></i>
+              </a>
+              <a
+                href="{% url 'employees:course_edit' course.pk %}"
+                class="text-yellow-600 hover:text-yellow-800 transition-colors duration-150 ease-in-out"
+                title="Edit Course"
+              >
+                <i class="fa-solid fa-pen-to-square"></i>
+              </a>
+              <a
+                href="{% url 'employees:course_delete' course.pk %}"
+                class="text-red-600 hover:text-red-900 transition-colors duration-150 ease-in-out"
+                title="Delete Course"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="px-6 py-8 text-center text-lg text-gray-500">
+            <i class="fa-solid fa-info-circle mr-2"></i>No courses found.
+            <p class="mt-2 text-sm text-gray-400">
+              Add a new course to get started!
+            </p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
